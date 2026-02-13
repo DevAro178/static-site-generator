@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType, text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, text_to_textnodes
+from textnode import TextNode, TextType, text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_link, split_nodes_image, text_to_textnodes, markdown_to_blocks
 from leafnode import LeafNode
 
 class TestTextNode(unittest.TestCase):
@@ -294,6 +294,58 @@ class TestExtractMarkdown(unittest.TestCase):
             ],
             nodes,
         )
+    def test_markdown_to_blocks_basic(self):
+        markdown = (
+            "# Heading\n\n"
+            "Paragraph text here.\n\n"
+            "- Item 1\n"
+            "- Item 2"
+        )
+
+        blocks = markdown_to_blocks(markdown)
+
+        self.assertListEqual(
+            [
+                "# Heading",
+                "Paragraph text here.",
+                "- Item 1\n- Item 2",
+            ],
+            blocks,
+        )
+
+    def test_markdown_to_blocks_extra_newlines(self):
+        markdown = (
+            "\n\n"
+            "# Heading\n\n\n"
+            "Paragraph\n\n\n\n"
+            "- Item"
+            "\n\n"
+        )
+
+        blocks = markdown_to_blocks(markdown)
+
+        self.assertListEqual(
+            [
+                "# Heading",
+                "Paragraph",
+                "- Item",
+            ],
+            blocks,
+        )
+
+    def test_markdown_to_blocks_single(self):
+        markdown = "Just a paragraph"
+
+        blocks = markdown_to_blocks(markdown)
+
+        self.assertListEqual(
+            ["Just a paragraph"],
+            blocks,
+        )
+
+    def test_markdown_to_blocks_empty(self):
+        self.assertListEqual([], markdown_to_blocks(""))
+
         
 if __name__ == "__main__":
     unittest.main()

@@ -33,7 +33,7 @@ def main():
     # Build into docs instead of public
     output_dir = "docs"
     
-    copy_static("static", "public")
+    copy_static("static", output_dir)
 
     generate_pages_recursive(
         "content",
